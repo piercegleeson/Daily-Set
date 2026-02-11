@@ -36,7 +36,7 @@ header{
   content: "Daily Set";
   position: absolute;
   left: 0;
-  color: #FFE;
+  color: #FFF;
   height: 48px;
   overflow: hidden;
   top: 0px;
@@ -67,6 +67,7 @@ header{
   font-size: 48px;
   line-height:44px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 
@@ -185,6 +186,7 @@ header{
 .info p{
   font-size:14px;
   line-height:18px;
+  margin:5px 0 10px 0;
 
 }
 .info p + h2{
@@ -218,13 +220,28 @@ header{
   }
   header{
     border-bottom:10px solid #fff;
+    padding-top:20px;
   }
   .timestat{
-    gap:14px;
+    gap:0;
+  }
+  .timestat .label {
+    font-size: 14px;
+    line-height:14px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .date{
+    font-size:14px;
+    line-height:14px;
   }
   .title{
-    font-size:48px;
-    line-height:40px;
+    font-size:32px;
+    line-height:32px;
+  }
+  .title:after{
+    height: 31px;
   }
   .timestat .value{
     font-size: 36px;
@@ -238,6 +255,10 @@ header{
   .info h2{
     border-bottom:0;
     padding-bottom:0;
+  }
+  .info p + h2{
+    padding-bottom:10px;
+
   }
   .info .example{
     width:50%;
