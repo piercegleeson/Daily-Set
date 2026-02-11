@@ -1,8 +1,4 @@
 .card {
-  --color-red: #E05A41;
-  --color-blue: #5396C5;
-  --color-yellow: #F6CD43;
-
   background: white;
   border-radius: 5px;
   padding: 12px;
@@ -12,6 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
 
 .card:hover {

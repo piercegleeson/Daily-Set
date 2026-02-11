@@ -10,6 +10,7 @@ import styles from './Game.module.css'
 
 type GameStatus = 'playing' | 'won'
 type FeedbackType = 'valid' | 'invalid' | null
+type ShareStatus = 'idle' | 'copied'
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-').map(Number)
@@ -32,9 +33,28 @@ export function Game() {
   const [gameStatus, setGameStatus] = useState<GameStatus>('playing')
   const [feedback, setFeedback] = useState<FeedbackType>(null)
   const [initialized, setInitialized] = useState(false)
+  const [shareStatus, setShareStatus] = useState<ShareStatus>('idle')
 
   const todayStr = getTodayDateString()
   const todayFormatted = formatDate(todayStr)
+
+  const handleShare = async () => {
+    const timeStr = `${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, '0')}`
+    const text = `Daily Set - ${todayFormatted}\n${score} sets found in ${timeStr}\nhttps://set.piercegleeson.com`
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text })
+        return
+      } catch {
+        // User cancelled or share failed — fall through to clipboard
+      }
+    }
+
+    await navigator.clipboard.writeText(text)
+    setShareStatus('copied')
+    setTimeout(() => setShareStatus('idle'), 2000)
+  }
 
   // Ref to track latest state for saving without causing effect re-runs
   const stateRef = useRef({ deck, board, score, time, gameStatus })
@@ -215,7 +235,7 @@ export function Game() {
             <span className={styles.value}>{formatTime(time)}</span>
           </div>
         </header>
-        <div className={`${styles.boardWrapper} ${feedback ? styles[feedback] : ''}`}>
+        <div className={styles.boardWrapper}>
           <Board
             cards={board}
             selectedIds={[...selectedIds]}
@@ -228,24 +248,38 @@ export function Game() {
           deck={deck}
         />
 
+        {/* TODO: remove this dev button */}
+        {gameStatus === 'playing' && (
+          <button
+            onClick={() => { setBoard([]); setDeck([]); setScore(7); setGameStatus('won'); }}
+            style={{ position: 'fixed', bottom: 8, right: 8, opacity: 0.5, fontSize: 11 }}
+          >
+            Test Win
+          </button>
+        )}
+
         {gameStatus === 'won' && (
           <div className={styles.overlay}>
             <div className={styles.completionCard}>
-              <h2 className={styles.completionTitle}>Puzzle Complete!</h2>
+              <h2 className={styles.completionTitle}>Game Complete!</h2>
               <p className={styles.completionDate}>{todayFormatted}</p>
               <div className={styles.completionStats}>
                 <div className={styles.completionStat}>
-                  <span className={styles.completionStatValue}>{score}</span>
-                  <span className={styles.completionStatLabel}>Sets Found</span>
-                </div>
-                <div className={styles.completionStat}>
+                  <span className={styles.completionStatLabel}>Time</span>
                   <span className={styles.completionStatValue}>
                     {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
                   </span>
-                  <span className={styles.completionStatLabel}>Time</span>
                 </div>
+                <div className={styles.completionStat}>
+                  <span className={styles.completionStatLabel}>Sets Found</span>
+                  <span className={styles.completionStatValue}>{score}</span>
+                </div>
+
               </div>
-              <p className={styles.completionMessage}>Come back tomorrow for a new puzzle!</p>
+              <p className={styles.completionMessage}>Come back tomorrow for a new set!</p>
+              <button className={styles.shareButton} onClick={handleShare}>
+                {shareStatus === 'copied' ? 'Copied!' : 'Share'}
+              </button>
             </div>
           </div>
         )}
@@ -254,7 +288,7 @@ export function Game() {
         <h2>What’s this?</h2>
         <p>Daily Set is an online version of the cult pattern matching card game SET!. Everyone who visits today is being dealt the same game, so you can compare your time with friends if you wish.</p>
         <p>There are 85 cards in the deck, all unique, and you must gather them into sets of three. </p>
-        <p>A set is three cards where, for each feature (color, number, shape, shading), the cards are either all the same or all different.</p>
+        <p>A set is three cards where, for each characteristic (color, number, shape, shading), the cards are either all the same or all different.</p>
         <p>Just try it, it will start to make sense!</p>
         <h2>Example Sets</h2>
         <div className={styles.example}>
