@@ -226,7 +226,7 @@ export function Game() {
       <div className={`${styles.indicator} ${feedback ? styles[feedback] : ''}`}></div>
       <div className={styles.game}>
         <header>
-          <div class="game-title">
+          <div className="game-title">
             <p className={styles.date}>{todayFormatted}</p>
             <h1 className={styles.title}>Daily Set</h1>
           </div>

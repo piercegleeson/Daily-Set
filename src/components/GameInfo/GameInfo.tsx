@@ -3,10 +3,10 @@ import styles from './GameInfo.module.css'
 interface GameInfoProps {
   score: number
   setsOnBoard: number
-  deck: number
+  deck: { length: number }
 }
 
-export function GameInfo({ time, score, setsOnBoard, deck }: GameInfoProps) {
+export function GameInfo({ score, setsOnBoard, deck }: GameInfoProps) {
   return (
     <div className={styles.gameInfo}>
       <div className={styles.stats}>
