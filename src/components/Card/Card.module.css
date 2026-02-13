@@ -3,23 +3,48 @@
   border-radius: 5px;
   padding: 12px;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   aspect-ratio: 4 / 6;
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.03);
 }
 
 .card.selected {
-  border-color: green;
-  border-width: 3px;
-  box-shadow: 0 0 0 5px var(--color-yellow);
+  box-shadow:
+    0 0 0 3px var(--color-yellow),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: pop 0.15s ease-out;
+  transform-origin: center center;
+}
+
+@keyframes pop {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(0) scale(1.06); }
+  100% { transform: translateY(0) scale(1.03); }
+}
+
+.card.removing {
+  animation: fadeOut 0.35s ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.85); }
+}
+
+.card.entering {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .card.hinted {
@@ -51,7 +76,9 @@
 
 @media(max-width:600px){
   .card.selected {
-    box-shadow: 0 0 0 3px var(--color-yellow);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+      0 0 0 2px var(--color-yellow);
   }
   .shape {
     width: 45%;

@@ -5,6 +5,8 @@ interface CardProps {
   card: CardType
   isSelected: boolean
   isHinted?: boolean
+  isRemoving?: boolean
+  isEntering?: boolean
   onClick: () => void
 }
 
@@ -58,14 +60,22 @@ function Shape({ shape, color, shading }: { shape: string; color: string; shadin
   )
 }
 
-export function Card({ card, isSelected, isHinted, onClick }: CardProps) {
+export function Card({ card, isSelected, isHinted, isRemoving, isEntering, onClick }: CardProps) {
   const shapes = Array.from({ length: card.count }, (_, i) => (
     <Shape key={i} shape={card.shape} color={card.color} shading={card.shading} />
   ))
 
+  const classNames = [
+    styles.card,
+    isSelected ? styles.selected : '',
+    isHinted ? styles.hinted : '',
+    isRemoving ? styles.removing : '',
+    isEntering ? styles.entering : '',
+  ].filter(Boolean).join(' ')
+
   return (
     <div
-      className={`${styles.card} ${isSelected ? styles.selected : ''} ${isHinted ? styles.hinted : ''}`}
+      className={classNames}
       onClick={onClick}
     >
       <div className={styles.shapes}>{shapes}</div>

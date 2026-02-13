@@ -6,10 +6,12 @@ interface BoardProps {
   cards: CardType[]
   selectedIds: string[]
   hintIds: string[]
+  removingIds: string[]
+  enteringIds: string[]
   onCardClick: (card: CardType) => void
 }
 
-export function Board({ cards, selectedIds, hintIds, onCardClick }: BoardProps) {
+export function Board({ cards, selectedIds, hintIds, removingIds, enteringIds, onCardClick }: BoardProps) {
   return (
     <div className={styles.board}>
       {cards.map((card) => (
@@ -18,6 +20,8 @@ export function Board({ cards, selectedIds, hintIds, onCardClick }: BoardProps) 
           card={card}
           isSelected={selectedIds.includes(card.id)}
           isHinted={hintIds.includes(card.id)}
+          isRemoving={removingIds.includes(card.id)}
+          isEntering={enteringIds.includes(card.id)}
           onClick={() => onCardClick(card)}
         />
       ))}

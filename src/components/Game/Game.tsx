@@ -36,6 +36,9 @@ export function Game() {
   const [hintIds, setHintIds] = useState<string[]>([])
   const [hintCount, setHintCount] = useState(0)
   const [usedHintForCurrentSet, setUsedHintForCurrentSet] = useState(false)
+  const [removingIds, setRemovingIds] = useState<string[]>([])
+  const [enteringIds, setEnteringIds] = useState<string[]>([])
+
 
   const todayStr = getTodayDateString()
   const todayFormatted = formatDate(todayStr)
@@ -214,34 +217,46 @@ export function Game() {
     setFeedback(valid ? 'valid' : 'invalid')
 
     const timeout = setTimeout(() => {
-      if (valid) {
-        setScore((s) => s + 1)
+      setSelectedIds([])
+      setFeedback(null)
 
+      if (!valid) return
+
+      setScore((s) => s + 1)
+      setRemovingIds([...selectedIds])
+
+      // After fade-out animation, swap the board and slide in new cards
+      setTimeout(() => {
         let newBoard = board.filter((c) => !selectedIds.includes(c.id))
         let newDeck = deck
+        const newCardIds: string[] = []
 
-        // Refill board to 12 cards
         if (newBoard.length < 12 && newDeck.length > 0) {
           const cardsNeeded = Math.min(12 - newBoard.length, newDeck.length)
-          newBoard = [...newBoard, ...newDeck.slice(0, cardsNeeded)]
+          const newCards = newDeck.slice(0, cardsNeeded)
+          newBoard = [...newBoard, ...newCards]
           newDeck = newDeck.slice(cardsNeeded)
+          newCardIds.push(...newCards.map((c) => c.id))
         }
 
-        // Keep adding cards if no valid set exists
         while (findValidSet(newBoard) === null && newDeck.length > 0) {
-          newBoard = [...newBoard, ...newDeck.slice(0, 3)]
+          const extra = newDeck.slice(0, 3)
+          newBoard = [...newBoard, ...extra]
           newDeck = newDeck.slice(3)
+          newCardIds.push(...extra.map((c) => c.id))
         }
 
         setDeck(newDeck)
         setBoard(newBoard)
+        setRemovingIds([])
+        setEnteringIds(newCardIds)
         setUsedHintForCurrentSet(false)
         setHintIds([])
-        setTimeout(() => saveCurrentState(), 50)
-      }
-
-      setSelectedIds([])
-      setFeedback(null)
+        setTimeout(() => {
+          setEnteringIds([])
+          saveCurrentState()
+        }, 300)
+      }, 350)
     }, 600)
 
     return () => clearTimeout(timeout)
@@ -269,6 +284,8 @@ export function Game() {
             cards={board}
             selectedIds={[...selectedIds]}
             hintIds={hintIds}
+            removingIds={removingIds}
+            enteringIds={enteringIds}
             onCardClick={handleCardClick}
           />
         </div>
