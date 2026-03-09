@@ -12,7 +12,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #2F2C24;
+  background: #252421;
 }
 body:before{
   content:"";
